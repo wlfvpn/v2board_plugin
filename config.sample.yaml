@@ -1,0 +1,11 @@
+telegram_bot_token: "6123211362:A2fx2eHR2124tfuHBLKfLUnPALEcrcY" #change it
+expiry_days: 90
+default_user_password: "hel22lo"
+
+panel:
+    url: "https://195.231.213.290" #example "google.com"
+    max_users: 1500 # change it
+    email: "a@b.com"
+    password: "a@b.com"
+
+ 
