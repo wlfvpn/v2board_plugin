@@ -51,7 +51,7 @@ class Panel():
         return True, user['subscribe_url']
     
     def get_usage(self,id):
-        user = self.search_user_by_email_prefix(id, page_size=50)
+        user = self.search_user_by_email_prefix(id, page_size=150)
         if user is None:
             return False, "مشکلی در ارتباط با سرور پیش آمده. لطفا بعدا امتحان فرمایید."
         return True, f"{int(user['total_used'])/ 1024**3}"

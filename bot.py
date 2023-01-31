@@ -32,7 +32,7 @@ async def gen_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
         sub_url = item['subscribe_url']
         await context.bot.send_message(chat_id=update.effective_chat.id, text=sub_url) 
     else:
-        result, message = panel.add_user(str(update.effective_user.id), str(update.effective_user.username), get_timestamp(config['expiry_days']),config['default_user_password'],plan_id=1)
+        result, message = panel.add_user(str(update.effective_user.id), str(update.effective_user.username), get_timestamp(config['expiry_days']),config['default_user_password'],plan_id=config['plan_id'])
         await context.bot.send_message(chat_id=update.effective_chat.id, text=message) 
 
         result, sub_url = panel.get_sub(str(update.effective_user.id), str(update.effective_user.username))
@@ -55,7 +55,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
 async def gen_report(update: Update, context: ContextTypes.DEFAULT_TYPE):
     config = load_config(config_path)    
-    result, usage = panel.get_usage(str(update.effective_user.id), str(update.effective_user.username))
+    result, usage = panel.get_usage(str(update.effective_user.id))
     await context.bot.send_message(chat_id=update.effective_chat.id, text=f"مقدار مصرفی شما: \n {usage} GB")
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
