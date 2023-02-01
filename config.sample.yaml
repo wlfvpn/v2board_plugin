@@ -5,8 +5,7 @@ plan_id: 1
 maintenance: false
 
 panel:
-    url: "https://195.231.213.290" #example "google.com"
-    max_users: 1500 # Doesnt work yet
+    url: "https://195.231.213.290/aaaxw12" #example "google.com"
     email: "a@b.com"
     password: "a@b.com"
 
