@@ -9,6 +9,7 @@ import logging
 # Enable logging
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
+requests.packages.urllib3.disable_warnings()
 
 class Panel():
     def __init__(self, url, max_users, email, password):
@@ -16,7 +17,9 @@ class Panel():
         self.email = email
         self.password = password
         self.logger = logging.getLogger("Panel")
-        self.url = url 
+        self.url = '/'.join(url.split('/')[:-1])
+        self.suffix_url = url.split('/')[-1]
+
         r = self.login()
         if r['is_admin']:
             self.logger.info('Loggin to panel was successful.')
@@ -31,7 +34,7 @@ class Panel():
         return r.json()['data']
     
     def add_user(self,id,username,expiry_date,password,plan_id):
-        url = f"{self.url}/api/v1/admin/user/generate"
+        url = f"{self.url}/api/v1/{self.suffix_url}/user/generate"
         payload = {'email_prefix': id, 'email_suffix': username, 'expired_at':expiry_date, 'password': password, 'plan_id':plan_id}
         r = self.login()
         r = requests.post(url, data=payload, headers={'authorization':r['auth_data']}, verify=False)
@@ -41,7 +44,7 @@ class Panel():
             if r.json()['message'] == "邮箱已存在于系统中":
                 return False, "شما قبلا ثبت نام کرده اید."
             else:
-                self.logger.info(r.json())
+                self.logger.error(r.json())
                 return False, "مشکلی در ارتباط با سرور پیش آمده. لطفا دوباره امتحان فرمایید."
 
     def get_sub(self,id,username):    
@@ -62,7 +65,7 @@ class Panel():
         r = self.login()
 
         while True:
-            link = f"{self.url}/api/v1/admin/user/fetch?page_size={page_size}&current={current_page}"
+            link = f"{self.url}/api/v1/{self.suffix_url}/user/fetch?page_size={page_size}&current={current_page}"
             response = requests.get(link, headers={'authorization':r['auth_data']}, verify=False)
             users_in_page = response.json()['data']
 
