@@ -11,19 +11,46 @@ import argparse
 import datetime
 import random
 
+requests.packages.urllib3.disable_warnings()
+
 # Enable logging
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("BOT")
+async def is_member(update: Update, context: ContextTypes.DEFAULT_TYPE, send_thank_you=True):
 
+    # Check if the client is a member of the specified channel
+    channel_id = '@WomanLifeFreedomVPN'  # The first argument is the channel ID
+    user_id = update.effective_user.id # update.message.from_user.id  # Get the client's user ID
+    chat_member = await context.bot.get_chat_member(chat_id=channel_id, user_id=user_id)
+    if chat_member.status in ["member", "creator"]:
+        if send_thank_you:
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="Thank you for subscribing to our channel!")
+    else:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Please subscribe to our channel {channel_id}.")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="لطفا ابتدا عضو کانال شوید. این وی پی ان محدود به اعضای کانال می باشد.")
+    return chat_member.status in ["member", "creator"]
 
-async def instructions(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="""Download the applications below and import the generated link.
-                                                                          <b>Android:</b> V2rayNG
-                                                                          <b>IOS:</b> NapsternetV, shadowrocket
-                                                                          <b>Windows:</b> v2rayN
-                                                                          <b>MacOS:</b> V2RayXS """, parse_mode="HTML")
-    
+async def is_maintenance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
+    config = load_config(config_path)
+    if config['maintenance']:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry. The bot is under maintanance right now.")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text=".در حال ارتقا ربات هستیم. ربات بصورت موقتی غیرفعال است.")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="در حال حاضر سرور پر شده است. ")
+
+    return config['maintenance']
+
 async def gen_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    maintenance = await is_maintenance(update, context)
+    if maintenance:
+        return
+        
+    if not update.effective_user.username:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="Please setup a username for your telegram account.")
+        return
+
+    if not await is_member(update, context, send_thank_you=False):
+        return 
+
     print(f"Gave link to {str(update.effective_user.username)}")
     config = load_config(config_path)
     item = panel.search_user_by_email_prefix(str(update.effective_user.id),page_size=150)
@@ -46,7 +73,10 @@ async def gen_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Sends a message with three inline buttons attached."""
-    
+    maintenance = await is_maintenance(update, context)
+    if maintenance:
+        return
+
     keyboard = [[InlineKeyboardButton("دریافت لینک شخصی", callback_data="gen_link")],
                 [InlineKeyboardButton("گزارش استفاده", callback_data="usage")]]
     reply_markup = InlineKeyboardMarkup(keyboard)
