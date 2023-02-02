@@ -10,6 +10,6 @@ def get_timestamp(days_later):
     import datetime
     import time
 
-    three_months_later = datetime.datetime.now() + datetime.timedelta(days=90)
+    three_months_later = datetime.datetime.now() + datetime.timedelta(days=days_later)
     timestamp = int(time.mktime(three_months_later.timetuple()))
     return timestamp
