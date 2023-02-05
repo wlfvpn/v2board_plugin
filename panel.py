@@ -64,7 +64,7 @@ class Panel():
         r = self.login()
 
         while True:
-            link = f"{self.url}/api/v1/{self.suffix_url}/user/fetch?page_size={page_size}&current={current_page}"
+            link = f"{self.url}/api/v1/{self.suffix_url}/user/fetch?pageSize={page_size}&current={current_page}"
             response = requests.get(link, headers={'authorization':r['auth_data']}, verify=False)
             users_in_page = response.json()['data']
 
@@ -76,7 +76,7 @@ class Panel():
                 break
 
             current_page += 1
-        
+        self.logger.warn(f'Could not find the user with email prefix of {email_prefix}')
         return None
 
 if __name__=="__main__":
