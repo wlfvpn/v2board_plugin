@@ -12,8 +12,7 @@ logging.basicConfig(
 requests.packages.urllib3.disable_warnings()
 
 class Panel():
-    def __init__(self, url, max_users, email, password):
-        self.max_users = max_users
+    def __init__(self, url, email, password):
         self.email = email
         self.password = password
         self.logger = logging.getLogger("Panel")
