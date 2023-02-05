@@ -3,6 +3,7 @@ expiry_days: 90
 default_user_password: "hel22lo"
 plan_id: 1
 maintenance: false
+telegram_channel_id: "@womanlifefreedomvpn"
 
 panel:
     url: "https://195.231.213.290/aaaxw12" #example "google.com"
